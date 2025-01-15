@@ -1,0 +1,40 @@
+# General
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn
+.pnp
+.pnpm-debug.log*
+*.log
+.DS_Store
+
+# TypeScript cache
+*.tsbuildinfo
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Compiled JS/CSS
+/dist
+/build
+
+# Test results
+/coverage
+/reports
+
+# Specific to frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/*.map
+frontend/.cache
+
+# Specific to backend
+backend/node_modules/
+backend/dist/
+backend/build/
+backend/*.map
+backend/.cache
