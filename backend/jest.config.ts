@@ -1,5 +1,9 @@
-module.exports = {
-  testEnvironment: 'node',
-  coverageDirectory: 'coverage',
-  testPathIgnorePatterns: ['/node_modules/'],
+// jest.config.ts
+import type { Config } from "jest";
+
+const config: Config = {
+  preset: "ts-jest",
+  testEnvironment: "node",
 };
+
+export default config;

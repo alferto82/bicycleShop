@@ -4,21 +4,18 @@ import { sequelize } from "../database/database";
 
 interface CombinationAttributes {
   id?: number;
-  part1: string;
-  part2: string;
+  part1: number;
+  part2: number;
   allowed: boolean;
 }
 
-interface CombinationCreationAttributes
-  extends Optional<CombinationAttributes, "id"> {}
-
 class Combination
-  extends Model<CombinationAttributes, CombinationCreationAttributes>
+  extends Model<CombinationAttributes, Optional<CombinationAttributes, "id">>
   implements CombinationAttributes
 {
   public id!: number;
-  public part1!: string;
-  public part2!: string;
+  public part1!: number;
+  public part2!: number;
   public allowed!: boolean;
 }
 
@@ -30,11 +27,11 @@ Combination.init(
       primaryKey: true,
     },
     part1: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
     },
     part2: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
     },
     allowed: {

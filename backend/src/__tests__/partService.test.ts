@@ -11,6 +11,7 @@ jest.mock("../models/Part");
 describe("Part Service", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("should return all parts", async () => {
@@ -22,7 +23,7 @@ describe("Part Service", () => {
   });
 
   it("should create a new part", async () => {
-    const newPart = {
+    const newPart: Partial<Part> = {
       name: "Chain",
       category: "Drivetrain",
       type: "Component",
@@ -31,7 +32,7 @@ describe("Part Service", () => {
     const createdPart = { id: 2, ...newPart };
     (Part.create as jest.Mock).mockResolvedValue(createdPart);
 
-    const part = await createPart(newPart);
+    const part = await createPart(newPart as Omit<Part, "id">);
     expect(part).toEqual(createdPart);
   });
 
@@ -63,5 +64,43 @@ describe("Part Service", () => {
 
     const parts = await getPartsByCategoryAndType("Brakes", "Component");
     expect(parts).toEqual(mockParts);
+  });
+
+  it("should return an empty array if no parts match the category and type", async () => {
+    (Part.findAll as jest.Mock).mockResolvedValue([]);
+
+    const parts = await getPartsByCategoryAndType(
+      "NonExistentCategory",
+      "NonExistentType"
+    );
+    expect(parts).toEqual([]);
+  });
+
+  it("should throw an error if createPart fails", async () => {
+    const newPart: Partial<Part> = {
+      name: "Chain",
+      category: "Drivetrain",
+      type: "Component",
+      inStock: true,
+    };
+    (Part.create as jest.Mock).mockRejectedValue(new Error("Creation failed"));
+
+    await expect(createPart(newPart as Omit<Part, "id">)).rejects.toThrow(
+      "Creation failed"
+    );
+  });
+
+  it("should throw an error if getAllParts fails", async () => {
+    (Part.findAll as jest.Mock).mockRejectedValue(new Error("Fetch failed"));
+
+    await expect(getAllParts()).rejects.toThrow("Fetch failed");
+  });
+
+  it("should throw an error if getPartsByCategoryAndType fails", async () => {
+    (Part.findAll as jest.Mock).mockRejectedValue(new Error("Fetch failed"));
+
+    await expect(
+      getPartsByCategoryAndType("Brakes", "Component")
+    ).rejects.toThrow("Fetch failed");
   });
 });

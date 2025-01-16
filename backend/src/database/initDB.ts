@@ -2,10 +2,7 @@ import { sequelize } from "../database/database";
 import Part from "../models/Part";
 import Combination from "../models/Combination";
 
-const initDB = async () => {
-  await sequelize.sync({ force: true }); // Esto eliminará y recreará las tablas
-
-  // Insertar datos iniciales en la tabla Part
+const insertParts = async () => {
   await Part.bulkCreate([
     {
       name: "Full-suspension",
@@ -99,16 +96,52 @@ const initDB = async () => {
       inStock: true,
     },
   ]);
-
-  // Insertar datos iniciales en la tabla Combination
-  await Combination.bulkCreate([
-    { part1: "Mountain wheels", part2: "Full-suspension", allowed: true },
-    { part1: "Fat bike wheels", part2: "Red", allowed: false },
-  ]);
-
-  console.log("Database initialized with sample data");
 };
 
-initDB().catch((error) => {
-  console.error("Error initializing database:", error);
-});
+const insertCombinations = async () => {
+  const mountainWheels = await Part.findOne({
+    where: { name: "Mountain wheels" },
+  });
+  const fullSuspension = await Part.findOne({
+    where: { name: "Full-suspension" },
+  });
+  const fatBikeWheels = await Part.findOne({
+    where: { name: "Fat bike wheels" },
+  });
+  const red = await Part.findOne({ where: { name: "Red" } });
+
+  if (mountainWheels && fullSuspension) {
+    await Combination.create({
+      part1: mountainWheels.id,
+      part2: fullSuspension.id,
+      allowed: true,
+    });
+  }
+
+  if (fatBikeWheels && red) {
+    await Combination.create({
+      part1: fatBikeWheels.id,
+      part2: red.id,
+      allowed: false,
+    });
+  }
+};
+
+const initDB = async () => {
+  try {
+    await sequelize.sync({ force: true }); // Elimina y recrea las tablas
+    console.log("Database synchronized");
+
+    await insertParts();
+    console.log("Parts inserted");
+
+    await insertCombinations();
+    console.log("Combinations inserted");
+
+    console.log("Database initialized with sample data");
+  } catch (error) {
+    console.error("Error initializing database:", error);
+  }
+};
+
+initDB();

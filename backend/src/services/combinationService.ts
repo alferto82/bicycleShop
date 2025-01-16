@@ -17,8 +17,10 @@ const updateCombination = async (
 ): Promise<Combination> => {
   const combination = await Combination.findByPk(id);
   if (combination) {
-    await combination.update(combinationData);
-    return combination;
+    const updatedCombination: Combination = await combination.update(
+      combinationData
+    );
+    return updatedCombination;
   }
   throw new Error("Combination not found");
 };
