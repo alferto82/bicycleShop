@@ -20,24 +20,29 @@ This project is a backend service for Marcus's bicycle shop, allowing him to sel
    ```bash
    git clone https://github.com/yourusername/bicycle-shop.git
    cd bicycle-shop
-Install dependencies:
 
-npm install
-Ensure you are using Node.js version 18 or later.
+2. Install dependencies:
+    ```bash
+    npm install
 
-Usage
-Development
-To run the server in development mode with automatic restarts:
+3. Ensure you are using Node.js version 18 or later.
+    ```bash
+    Usage
+    Development
 
-npm run dev
-Production
-To build and run the server in production mode:
+4. To run the server in development mode with automatic restarts:
+    ```bash
+    npm run dev
+    Production
 
-npm run build
-npm start
-API Endpoints
-Parts
-Get all parts
+5. To build and run the server in production mode:
+    ```bash
+    npm run build
+    npm start
+6. API Endpoints
+    ```bash
+    Parts
+    Get all parts
 
 Method: GET
 Route: /parts
