@@ -1,8 +1,7 @@
-// src/api/axios.ts
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000", // Cambia esto a la URL de tu backend
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000",
 });
 
 export default axiosInstance;

@@ -22,7 +22,7 @@ yarn-error.log*
 /build
 
 # Test results
-/coverage
+
 /reports
 
 # Specific to frontend
@@ -35,6 +35,7 @@ frontend/.cache
 # Specific to backend
 backend/node_modules/
 backend/dist/
+backend/coverage/
 backend/build/
 backend/*.map
 backend/.cache
