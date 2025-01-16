@@ -17,12 +17,12 @@ class Part
   extends Model<PartAttributes, PartCreationAttributes>
   implements PartAttributes
 {
-  public id!: number;
-  public name!: string;
-  public type!: string;
-  public category!: string;
-  public price!: number;
-  public inStock!: boolean;
+  public declare id: number;
+  public declare name: string;
+  public declare type: string;
+  public declare category: string;
+  public declare price: number;
+  public declare inStock: boolean;
 }
 
 Part.init(

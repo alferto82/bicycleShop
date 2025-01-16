@@ -10,8 +10,7 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      semi: 'off',
-      quotes: ['error', 'single']
+      semi: 'off'
     }
   }
 ];
