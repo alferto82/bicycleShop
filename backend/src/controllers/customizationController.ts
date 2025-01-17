@@ -11,9 +11,11 @@ const validateCombination = async (
     const totalPrice = await customizationService.validateCombination(
       req.body.parts
     );
-    res.json({ message: "Valid combination", totalPrice });
+    res.json({ totalPrice, isValid: true });
   } catch (error) {
-    res.status(400).json({ message: getErrorMessage(error) });
+    res
+      .status(400)
+      .json({ isValid: false, errorMessage: getErrorMessage(error) });
   }
 };
 

@@ -5,7 +5,7 @@ import { QueryClientProvider } from "react-query";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import store from "../store";
+import store from "./redux/store";
 import queryClient from "./queryClient";
 
 const theme = createTheme();
@@ -17,7 +17,9 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App />
+        <Provider store={store}>
+          <App />
+        </Provider>
       </ThemeProvider>
     </QueryClientProvider>
   </Provider>

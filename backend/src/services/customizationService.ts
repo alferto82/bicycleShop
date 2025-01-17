@@ -49,16 +49,15 @@ const validateCombination = async (partIds: number[]): Promise<number> => {
   }
 
   // Buscar todas las variaciones relacionadas con los IDs de partes
-  const partVariations = await PartVariation.findAll({
-    where: {
-      partIds: {
-        [Op.overlap]: partIds, // Buscar variaciones que incluyan al menos uno de los IDs
-      },
-    },
-  });
+  const partVariations = await PartVariation.findAll();
+
+  // Filtrar variaciones que incluyan al menos uno de los IDs
+  const relevantVariations = partVariations.filter((variation) =>
+    variation.partIds.some((id) => partIds.includes(id))
+  );
 
   // Aplicar ajustes de precio según las variaciones
-  (partVariations || []).forEach((variation) => {
+  relevantVariations.forEach((variation) => {
     // Si la variación aplica a todas las partes seleccionadas
     if (partIds.every((id) => variation.partIds.includes(id))) {
       totalPrice += variation.priceAdjustment;

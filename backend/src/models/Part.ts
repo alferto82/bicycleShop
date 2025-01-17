@@ -10,11 +10,8 @@ interface PartAttributes {
   inStock: boolean;
 }
 
-interface PartCreationAttributes
-  extends Optional<PartAttributes, "id" | "inStock"> {}
-
 class Part
-  extends Model<PartAttributes, PartCreationAttributes>
+  extends Model<PartAttributes, Optional<PartAttributes, "id">>
   implements PartAttributes
 {
   public declare id: number;
