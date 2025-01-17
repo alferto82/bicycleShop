@@ -21,6 +21,10 @@ const BikeConfigurator: React.FC = () => {
     setTemporalPrice((prevPrice) => prevPrice - oldPrice + newPrice);
   };
 
+  const allPartsSelected = categories.every(
+    (category) => selectedParts[category]
+  );
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -60,7 +64,12 @@ const BikeConfigurator: React.FC = () => {
       <Typography align="right" variant="h6" sx={{ mt: 2 }}>
         Total Price: ${temporalPrice + priceAdjustment}
       </Typography>
-      <Button variant="contained" color="primary" onClick={handleAddToCart}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleAddToCart}
+        disabled={!allPartsSelected}
+      >
         Add to Cart
       </Button>
     </Box>

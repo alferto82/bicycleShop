@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { loadCartItems, saveCartItems } from "../../utils/localStorageUtils";
 import axiosInstance from "../../api/axios";
 
 export interface Part {
@@ -13,6 +12,7 @@ export interface Part {
 export interface Bike {
   parts: Part[];
   totalPrice: number;
+  priceAdjustment: number;
 }
 
 interface CartState {
@@ -21,7 +21,7 @@ interface CartState {
 }
 
 const initialState: CartState = {
-  items: loadCartItems(),
+  items: [],
   error: null,
 };
 
@@ -31,11 +31,9 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action: PayloadAction<Bike>) => {
       state.items.push(action.payload);
-      saveCartItems(state.items);
     },
     removeFromCart: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter((item, pos) => pos !== action.payload);
-      saveCartItems(state.items);
     },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
@@ -56,6 +54,7 @@ export const validateAndAddToCart =
         const newBike: Bike = {
           parts: selectedParts,
           totalPrice,
+          priceAdjustment: 0, // Assuming no price adjustment in this case
         };
         dispatch(addToCart(newBike));
         dispatch(setError(null));

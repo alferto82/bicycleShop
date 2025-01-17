@@ -1,12 +1,12 @@
 import { Box, Button, Typography } from "@mui/material";
 import React from "react";
-import PropTypes from "prop-types";
 import { Part } from "../redux/slices/cartSlice";
 
 interface CartItemProps {
   bike: {
     parts: Part[];
     totalPrice: number;
+    priceAdjustment: number;
   };
   index: number;
   onRemove: (index: number) => void;
@@ -34,12 +34,16 @@ const CartItem: React.FC<CartItemProps> = ({ bike, index, onRemove }) => {
       alignItems="flex-start"
     >
       {showParts(bike.parts)}
-      <Typography
-        variant="body2"
-        align="left"
-        sx={{ mt: 1, fontWeight: "bold" }}
-      >
+      <Typography align="left" sx={{ mt: 1, fontWeight: "bold" }}>
         Price: ${bike.totalPrice}
+      </Typography>
+      {bike.priceAdjustment > 0 && (
+        <Typography align="left" sx={{ mt: 1, fontWeight: "bold" }}>
+          Price Adjustment: ${bike.priceAdjustment}
+        </Typography>
+      )}
+      <Typography variant="h5" align="left" sx={{ mt: 1, fontWeight: "bold" }}>
+        Total Price: ${bike.totalPrice + bike.priceAdjustment}
       </Typography>
       <Button
         variant="contained"

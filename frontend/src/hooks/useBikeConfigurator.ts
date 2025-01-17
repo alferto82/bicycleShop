@@ -12,6 +12,12 @@ interface Part {
   price: number;
 }
 
+interface Bike {
+  parts: Part[];
+  totalPrice: number;
+  priceAdjustment: number;
+}
+
 const useBikeConfigurator = () => {
   const [parts, setParts] = useState<Part[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -124,9 +130,10 @@ const useBikeConfigurator = () => {
       )
       .filter(Boolean) as Part[];
 
-    const newBike = {
+    const newBike: Bike = {
       parts: selectedPartObjects,
-      totalPrice: totalPrice + priceAdjustment,
+      totalPrice: totalPrice,
+      priceAdjustment,
     };
 
     dispatch(addToCart(newBike));

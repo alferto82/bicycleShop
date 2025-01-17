@@ -7,7 +7,10 @@ const Cart: React.FC = () => {
   const { cartItems, handleRemoveFromCart } = useCart();
 
   const calculateTotalPrice = () => {
-    return cartItems.reduce((total, bike) => total + bike.totalPrice, 0);
+    return cartItems.reduce(
+      (total, bike) => total + bike.totalPrice + bike.priceAdjustment,
+      0
+    );
   };
 
   return (
