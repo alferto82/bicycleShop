@@ -1,5 +1,6 @@
 import { sequelize } from "../database/database";
 import Part from "../models/Part";
+import PartVariation from "../models/PartVariation";
 import Combination from "../models/Combination";
 
 const insertParts = async () => {
@@ -98,31 +99,30 @@ const insertParts = async () => {
   ]);
 };
 
-const insertCombinations = async () => {
-  const mountainWheels = await Part.findOne({
-    where: { name: "Mountain wheels" },
-  });
+const insertVariations = async () => {
   const fullSuspension = await Part.findOne({
     where: { name: "Full-suspension" },
   });
-  const fatBikeWheels = await Part.findOne({
-    where: { name: "Fat bike wheels" },
+  const diamond = await Part.findOne({
+    where: { name: "Diamond" },
   });
-  const red = await Part.findOne({ where: { name: "Red" } });
+  const matte = await Part.findOne({
+    where: { name: "Matte" },
+  });
 
-  if (mountainWheels && fullSuspension) {
-    await Combination.create({
-      part1: mountainWheels.id,
-      part2: fullSuspension.id,
-      allowed: true,
+  if (fullSuspension && matte) {
+    await PartVariation.create({
+      part1: fullSuspension.id,
+      part2: matte.id,
+      priceAdjustment: 50,
     });
   }
 
-  if (fatBikeWheels && red) {
-    await Combination.create({
-      part1: fatBikeWheels.id,
-      part2: red.id,
-      allowed: false,
+  if (diamond && matte) {
+    await PartVariation.create({
+      part1: diamond.id,
+      part2: matte.id,
+      priceAdjustment: 35,
     });
   }
 };
@@ -135,8 +135,8 @@ const initDB = async () => {
     await insertParts();
     console.log("Parts inserted");
 
-    await insertCombinations();
-    console.log("Combinations inserted");
+    await insertVariations();
+    console.log("Variations inserted");
 
     console.log("Database initialized with sample data");
   } catch (error) {

@@ -13,7 +13,7 @@ interface PartSelectorProps {
   parts: Part[];
   selectedPart: string;
   handleSelectChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
-  onPriceChange: (oldPrice: number, newPrice: number) => void;
+  onPriceChange?: (oldPrice: number, newPrice: number) => void;
 }
 
 const PartSelector: React.FC<PartSelectorProps> = ({

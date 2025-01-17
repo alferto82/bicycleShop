@@ -22,4 +22,23 @@ const validateCombination = async (
   }
 };
 
-export { validateCombination };
+const validateVariations = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const partIds = req.body.partIds;
+    if (partIds.length <= 1) {
+      return res.json({ priceAdjustment: 0 });
+    }
+
+    const { priceAdjustment } = await customizationService.validateVariations(
+      partIds
+    );
+    res.json({ priceAdjustment });
+  } catch (error) {
+    res.status(400).json({ errorMessage: getErrorMessage(error) });
+  }
+};
+
+export { validateCombination, validateVariations };

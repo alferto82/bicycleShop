@@ -65,19 +65,39 @@ const validateCombination = async (
   const partVariations = await PartVariation.findAll();
 
   // Filtrar variaciones que incluyan al menos uno de los IDs
-  const relevantVariations = partVariations.filter((variation) =>
-    variation.partIds.some((id) => partIds.includes(id))
+  const relevantVariations = partVariations.filter(
+    (variation) =>
+      partIds.includes(variation.part1) && partIds.includes(variation.part2)
   );
 
   // Aplicar ajustes de precio según las variaciones
   relevantVariations.forEach((variation) => {
-    // Si la variación aplica a todas las partes seleccionadas
-    if (partIds.every((id) => variation.partIds.includes(id))) {
-      totalPrice += variation.priceAdjustment;
-    }
+    totalPrice += variation.priceAdjustment;
   });
 
   return { totalPrice };
 };
 
-export { validateCombination };
+const validateVariations = async (
+  partIds: number[]
+): Promise<{ priceAdjustment: number }> => {
+  let priceAdjustment = 0;
+
+  // Buscar todas las variaciones relacionadas con los IDs de partes
+  const partVariations = await PartVariation.findAll();
+
+  // Filtrar variaciones que incluyan al menos uno de los IDs
+  const relevantVariations = partVariations.filter(
+    (variation) =>
+      partIds.includes(variation.part1) && partIds.includes(variation.part2)
+  );
+
+  // Aplicar ajustes de precio según las variaciones
+  relevantVariations.forEach((variation) => {
+    priceAdjustment += variation.priceAdjustment;
+  });
+
+  return { priceAdjustment };
+};
+
+export { validateCombination, validateVariations };

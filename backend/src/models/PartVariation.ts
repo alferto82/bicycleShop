@@ -4,7 +4,8 @@ import { sequelize } from "../database/database";
 
 interface PartVariationAttributes {
   id?: number;
-  partIds: number[]; // Array de IDs de las piezas involucradas en la condición
+  part1: number; // ID de la primera pieza
+  part2: number; // ID de la segunda pieza
   priceAdjustment: number; // Ajuste de precio basado en la condición
 }
 
@@ -15,9 +16,10 @@ class PartVariation
   >
   implements PartVariationAttributes
 {
-  public id!: number;
-  public partIds!: number[]; // Lista de IDs de las piezas involucradas en la condición
-  public priceAdjustment!: number;
+  public declare id: number;
+  public declare part1: number; // ID de la primera pieza
+  public declare part2: number; // ID de la segunda pieza
+  public declare priceAdjustment: number;
 }
 
 PartVariation.init(
@@ -27,8 +29,12 @@ PartVariation.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    partIds: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER), // Un array de IDs de piezas
+    part1: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    part2: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     priceAdjustment: {

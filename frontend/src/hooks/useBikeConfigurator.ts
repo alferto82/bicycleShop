@@ -19,6 +19,7 @@ const useBikeConfigurator = () => {
     {}
   );
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [priceAdjustment, setPriceAdjustment] = useState<number>(0);
   const error = useSelector((state: RootState) => state.cart.error);
   const dispatch = useDispatch();
 
@@ -56,14 +57,35 @@ const useBikeConfigurator = () => {
     setTotalPrice(totalPrice);
   };
 
+  const checkVariation = async (partIds: number[]) => {
+    try {
+      const response = await axios.post("/customization/validate-variations", {
+        partIds,
+      });
+      setPriceAdjustment(response.data.priceAdjustment);
+    } catch (error) {
+      console.error("Error checking variations:", error);
+    }
+  };
+
   const handleSelectChange =
-    (category: string) => (event: React.ChangeEvent<{ value: unknown }>) => {
+    (category: string) =>
+    async (event: React.ChangeEvent<{ value: unknown }>) => {
       const newSelectedParts = {
         ...selectedParts,
         [category]: event.target.value as string,
       };
       setSelectedParts(newSelectedParts);
       calculateTotalPrice(newSelectedParts);
+
+      const selectedPartIds = Object.entries(newSelectedParts)
+        .map(
+          ([type, name]) =>
+            parts.find((part) => part.type === type && part.name === name)?.id
+        )
+        .filter(Boolean) as number[];
+
+      await checkVariation(selectedPartIds);
     };
 
   const handleAddToCart = async () => {
@@ -87,6 +109,7 @@ const useBikeConfigurator = () => {
     handleSelectChange,
     handleAddToCart,
     totalPrice,
+    priceAdjustment,
     error,
   };
 };
