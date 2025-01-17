@@ -4,6 +4,7 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import PartList from "./components/PartList";
 import Bikes from "./views/Bikes";
+import AdminStock from "./views/AdminStock";
 import {
   AppBar,
   Button,
@@ -36,6 +37,10 @@ function App() {
             <Button color="inherit" component={Link} to="/cart">
               Cart
             </Button>
+
+            <Button color="inherit" component={Link} to="/admin">
+              Admin
+            </Button>
           </Toolbar>
         </AppBar>
         <Container>
@@ -44,6 +49,7 @@ function App() {
               <Route path="/" element={<Bikes />} />
               <Route path="/bikes" element={<BikeConfigurator />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/admin" element={<AdminStock />} />
             </Routes>
           </main>
         </Container>
