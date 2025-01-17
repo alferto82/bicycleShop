@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,34 +10,32 @@ import {
   TableRow,
   Paper,
   TablePagination,
+  IconButton,
+  Button,
 } from "@mui/material";
-import axios from "../api/axios";
-
-interface Part {
-  id: number;
-  name: string;
-  type: string;
-  price: number;
-  inStock: boolean;
-}
+import { useDispatch, useSelector } from "react-redux";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import { RootState } from "../redux/store";
+import {
+  fetchParts,
+  createPart,
+  toggleStock,
+  removePartAsync,
+} from "../redux/slices/partSlice";
 
 const AdminStock: React.FC = () => {
-  const [parts, setParts] = useState<Part[]>([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const dispatch = useDispatch();
+  const { parts, loading, error } = useSelector(
+    (state: RootState) => state.parts
+  );
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   useEffect(() => {
-    const fetchParts = async () => {
-      try {
-        const response = await axios.get("/parts");
-        setParts(response.data);
-      } catch (error) {
-        console.error("Error fetching parts:", error);
-      }
-    };
-
-    fetchParts();
-  }, []);
+    dispatch(fetchParts());
+  }, [dispatch]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -50,11 +48,35 @@ const AdminStock: React.FC = () => {
     setPage(0);
   };
 
+  const handleCreatePart = async () => {
+    const newPart = {
+      name: "New Part",
+      type: "Type",
+      category: "Category",
+      price: 100,
+      inStock: true,
+    };
+    dispatch(createPart(newPart));
+  };
+
+  const handleToggleStock = (id: number) => {
+    dispatch(toggleStock(id));
+  };
+
+  const handleDeletePart = (id: number) => {
+    dispatch(removePartAsync(id));
+  };
+
   return (
     <Box sx={{ padding: 2 }}>
       <Typography variant="h4" gutterBottom>
         Admin Stock
       </Typography>
+      <Button variant="contained" color="primary" onClick={handleCreatePart}>
+        Create Part
+      </Button>
+      {loading && <Typography>Loading...</Typography>}
+      {error && <Typography color="error">{error}</Typography>}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -64,6 +86,7 @@ const AdminStock: React.FC = () => {
               <TableCell>Type</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>In Stock</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -84,6 +107,14 @@ const AdminStock: React.FC = () => {
                   <TableCell>{part.type}</TableCell>
                   <TableCell>${part.price}</TableCell>
                   <TableCell>{part.inStock ? "Yes" : "No"}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => handleDeletePart(part.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton onClick={() => handleToggleStock(part.id)}>
+                      {part.inStock ? <ToggleOffIcon /> : <ToggleOnIcon />}
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
