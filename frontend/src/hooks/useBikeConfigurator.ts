@@ -18,6 +18,7 @@ const useBikeConfigurator = () => {
   const [selectedParts, setSelectedParts] = useState<{ [key: string]: string }>(
     {}
   );
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const error = useSelector((state: RootState) => state.cart.error);
   const dispatch = useDispatch();
 
@@ -40,22 +41,43 @@ const useBikeConfigurator = () => {
     fetchParts();
   }, []);
 
-  const handleSelectChange =
-    (category: string) => (event: React.ChangeEvent<{ value: unknown }>) => {
-      setSelectedParts({
-        ...selectedParts,
-        [category]: event.target.value as string,
-      });
-    };
-
-  const handleAddToCart = () => {
+  const calculateTotalPrice = (selectedParts: { [key: string]: string }) => {
     const selectedPartObjects = Object.entries(selectedParts)
       .map(([type, name]) =>
         parts.find((part) => part.type === type && part.name === name)
       )
       .filter(Boolean) as Part[];
 
-    dispatch(validateAndAddToCart(selectedPartObjects));
+    const totalPrice = selectedPartObjects.reduce(
+      (total, part) => total + part.price,
+      0
+    );
+
+    setTotalPrice(totalPrice);
+  };
+
+  const handleSelectChange =
+    (category: string) => (event: React.ChangeEvent<{ value: unknown }>) => {
+      const newSelectedParts = {
+        ...selectedParts,
+        [category]: event.target.value as string,
+      };
+      setSelectedParts(newSelectedParts);
+      calculateTotalPrice(newSelectedParts);
+    };
+
+  const handleAddToCart = async () => {
+    const selectedPartObjects = Object.entries(selectedParts)
+      .map(([type, name]) =>
+        parts.find((part) => part.type === type && part.name === name)
+      )
+      .filter(Boolean) as Part[];
+
+    try {
+      await dispatch(validateAndAddToCart(selectedPartObjects));
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
   };
 
   return {
@@ -64,6 +86,7 @@ const useBikeConfigurator = () => {
     selectedParts,
     handleSelectChange,
     handleAddToCart,
+    totalPrice,
     error,
   };
 };

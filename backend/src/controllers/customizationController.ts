@@ -8,10 +8,13 @@ const validateCombination = async (
   res: Response
 ): Promise<void> => {
   try {
-    const totalPrice = await customizationService.validateCombination(
-      req.body.parts
-    );
-    res.json({ totalPrice, isValid: true });
+    const { totalPrice, errorMessage } =
+      await customizationService.validateCombination(req.body.parts);
+    if (errorMessage) {
+      res.status(400).json({ isValid: false, errorMessage });
+    } else {
+      res.json({ totalPrice, isValid: true });
+    }
   } catch (error) {
     res
       .status(400)

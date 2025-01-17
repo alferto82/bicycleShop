@@ -1,10 +1,11 @@
-// services/customizationService.ts
 import { Op } from "sequelize";
 import Part from "../models/Part";
 import PartVariation from "../models/PartVariation";
 import Combination from "../models/Combination";
 
-const validateCombination = async (partIds: number[]): Promise<number> => {
+const validateCombination = async (
+  partIds: number[]
+): Promise<{ totalPrice: number; errorMessage?: string }> => {
   let totalPrice = 0;
 
   // Obtener detalles de las partes seleccionadas
@@ -14,16 +15,19 @@ const validateCombination = async (partIds: number[]): Promise<number> => {
 
   // Validar si todas las partes existen y están en stock
   if (parts.length !== partIds.length) {
-    throw new Error("Some parts do not exist or are unavailable.");
+    return {
+      totalPrice: 0,
+      errorMessage: "Some parts do not exist or are unavailable.",
+    };
   }
 
   // Calcular el precio base y validar el stock
-  parts.forEach((part) => {
+  for (const part of parts) {
     if (!part.inStock) {
-      throw new Error(`${part.id} is out of stock`);
+      return { totalPrice: 0, errorMessage: `${part.name} is out of stock` };
     }
     totalPrice += part.price;
-  });
+  }
 
   // Validar si las combinaciones de partes son permitidas
   const invalidCombinations = await Combination.findAll({
@@ -39,13 +43,22 @@ const validateCombination = async (partIds: number[]): Promise<number> => {
   });
 
   if (invalidCombinations.length > 0) {
-    const invalidPairs = invalidCombinations.map(
-      (combination) => `${combination.part1} and ${combination.part2}`
-    );
+    const invalidPairs = invalidCombinations.map((combination) => [
+      combination.part1,
+      combination.part2,
+    ]);
+    const invalidPairsNames = invalidPairs.map(([part1Id, part2Id]) => {
+      const part1Name = parts.find((part) => part.id === part1Id)?.name;
+      const part2Name = parts.find((part) => part.id === part2Id)?.name;
+      return `${part1Name} and ${part2Name}`;
+    });
 
-    throw new Error(
-      `The following combinations are not allowed: ${invalidPairs.join(", ")}`
-    );
+    return {
+      totalPrice: 0,
+      errorMessage: `The following combinations are not allowed: ${invalidPairsNames.join(
+        " and "
+      )}`,
+    };
   }
 
   // Buscar todas las variaciones relacionadas con los IDs de partes
@@ -64,7 +77,7 @@ const validateCombination = async (partIds: number[]): Promise<number> => {
     }
   });
 
-  return totalPrice;
+  return { totalPrice };
 };
 
 export { validateCombination };

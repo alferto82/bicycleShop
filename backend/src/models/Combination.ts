@@ -13,10 +13,10 @@ class Combination
   extends Model<CombinationAttributes, Optional<CombinationAttributes, "id">>
   implements CombinationAttributes
 {
-  public id!: number;
-  public part1!: number;
-  public part2!: number;
-  public allowed!: boolean;
+  public declare id: number;
+  public declare part1: number;
+  public declare part2: number;
+  public declare allowed: boolean;
 }
 
 Combination.init(

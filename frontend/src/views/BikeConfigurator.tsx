@@ -12,10 +12,10 @@ const BikeConfigurator: React.FC = () => {
     handleAddToCart,
     error,
   } = useBikeConfigurator();
-  const [temporalPrice, setTemporalPrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const handlePriceChange = (oldPrice: number, newPrice: number) => {
-    setTemporalPrice((prevPrice) => prevPrice - oldPrice + newPrice);
+    setTotalPrice((prevPrice) => prevPrice - oldPrice + newPrice);
   };
 
   return (
@@ -40,7 +40,7 @@ const BikeConfigurator: React.FC = () => {
         </Alert>
       )}
       <Typography align="right" variant="h6" sx={{ mt: 2 }}>
-        Total Price: ${temporalPrice}
+        Total Price: ${totalPrice}
       </Typography>
       <Button variant="contained" color="primary" onClick={handleAddToCart}>
         Add to Cart

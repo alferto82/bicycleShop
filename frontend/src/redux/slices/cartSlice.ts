@@ -63,8 +63,11 @@ export const validateAndAddToCart =
         dispatch(setError(errorMessage || "Invalid bike configuration"));
       }
     } catch (error) {
-      console.error("Error validating combination:", error);
-      dispatch(setError("Error validating combination"));
+      console.error(
+        "Error validating combination:",
+        error.response.data.errorMessage
+      );
+      dispatch(setError(error.response.data.errorMessage));
     }
   };
 
