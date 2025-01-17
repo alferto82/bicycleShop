@@ -6,6 +6,7 @@ interface Part {
   name: string;
   type: string;
   price: number;
+  inStock: boolean;
 }
 
 interface PartSelectorProps {
@@ -15,6 +16,7 @@ interface PartSelectorProps {
   handleSelectChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   onPriceChange: (oldPrice: number, newPrice: number) => void;
   disabledOptions: number[];
+  outOfStockParts: number[];
 }
 
 const PartSelector: React.FC<PartSelectorProps> = ({
@@ -24,6 +26,7 @@ const PartSelector: React.FC<PartSelectorProps> = ({
   handleSelectChange,
   onPriceChange,
   disabledOptions,
+  outOfStockParts,
 }) => {
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const newSelectedPart = parts.find(
@@ -41,6 +44,10 @@ const PartSelector: React.FC<PartSelectorProps> = ({
     return disabledOptions.includes(id);
   };
 
+  const isOutOfStock = (id: number) => {
+    return outOfStockParts.includes(id);
+  };
+
   return (
     <FormControl fullWidth margin="normal">
       <InputLabel>{type}</InputLabel>
@@ -52,9 +59,9 @@ const PartSelector: React.FC<PartSelectorProps> = ({
               key={part.id}
               value={part.name}
               disabled={isDisabled(part.id)}
-              style={{ color: isDisabled(part.id) ? "red" : "inherit" }}
             >
               ({part.id}) {part.name} - ${part.price}
+              {isOutOfStock(part.id) && <p>OUT OF STOCK</p>}
             </MenuItem>
           ))}
       </Select>

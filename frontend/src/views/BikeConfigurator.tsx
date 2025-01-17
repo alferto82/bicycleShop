@@ -13,6 +13,7 @@ const BikeConfigurator: React.FC = () => {
     totalPrice,
     priceAdjustment,
     disabledOptions,
+    outOfStockParts,
     error,
   } = useBikeConfigurator();
   const [temporalPrice, setTemporalPrice] = useState(totalPrice);
@@ -24,6 +25,8 @@ const BikeConfigurator: React.FC = () => {
   const allPartsSelected = categories.every(
     (category) => selectedParts[category]
   );
+
+  const anyPartOutOfStock = outOfStockParts.length > 0;
 
   return (
     <Box>
@@ -40,6 +43,7 @@ const BikeConfigurator: React.FC = () => {
           handleSelectChange={handleSelectChange(type)}
           onPriceChange={handlePriceChange}
           disabledOptions={Object.values(disabledOptions).flat()}
+          outOfStockParts={outOfStockParts}
         />
       ))}
       {error && (
@@ -68,7 +72,7 @@ const BikeConfigurator: React.FC = () => {
         variant="contained"
         color="primary"
         onClick={handleAddToCart}
-        disabled={!allPartsSelected}
+        disabled={!allPartsSelected || anyPartOutOfStock}
       >
         Add to Cart
       </Button>

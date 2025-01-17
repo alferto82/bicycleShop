@@ -10,6 +10,7 @@ interface Part {
   category: string;
   type: string;
   price: number;
+  inStock: boolean;
 }
 
 interface Bike {
@@ -29,6 +30,7 @@ const useBikeConfigurator = () => {
   const [disabledOptions, setDisabledOptions] = useState<{
     [key: string]: number[];
   }>({});
+  const [outOfStockParts, setOutOfStockParts] = useState<number[]>([]);
   const error = useSelector((state: RootState) => state.cart.error);
   const dispatch = useDispatch();
 
@@ -89,6 +91,20 @@ const useBikeConfigurator = () => {
     }
   };
 
+  const checkStock = (selectedParts: { [key: string]: string }) => {
+    const selectedPartObjects = Object.entries(selectedParts)
+      .map(([type, name]) =>
+        parts.find((part) => part.type === type && part.name === name)
+      )
+      .filter(Boolean) as Part[];
+
+    const outOfStockParts = selectedPartObjects
+      .filter((part) => !part.inStock)
+      .map((part) => part.id);
+
+    setOutOfStockParts(outOfStockParts);
+  };
+
   const handleSelectChange =
     (category: string) =>
     async (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -98,6 +114,7 @@ const useBikeConfigurator = () => {
       };
       setSelectedParts(newSelectedParts);
       calculateTotalPrice(newSelectedParts);
+      checkStock(newSelectedParts);
 
       const selectedPartIds = Object.entries(newSelectedParts)
         .map(
@@ -132,7 +149,7 @@ const useBikeConfigurator = () => {
 
     const newBike: Bike = {
       parts: selectedPartObjects,
-      totalPrice: totalPrice,
+      totalPrice: totalPrice + priceAdjustment,
       priceAdjustment,
     };
 
@@ -148,6 +165,7 @@ const useBikeConfigurator = () => {
     totalPrice,
     priceAdjustment,
     disabledOptions,
+    outOfStockParts,
     error,
   };
 };
