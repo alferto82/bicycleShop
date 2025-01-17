@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "../api/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { validateAndAddToCart } from "../redux/slices/cartSlice";
+import { addToCart } from "../redux/slices/cartSlice";
 import { RootState } from "../redux/store";
 
 interface Part {
@@ -20,6 +20,9 @@ const useBikeConfigurator = () => {
   );
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [priceAdjustment, setPriceAdjustment] = useState<number>(0);
+  const [disabledOptions, setDisabledOptions] = useState<{
+    [key: string]: number[];
+  }>({});
   const error = useSelector((state: RootState) => state.cart.error);
   const dispatch = useDispatch();
 
@@ -68,6 +71,18 @@ const useBikeConfigurator = () => {
     }
   };
 
+  const checkCombinations = async (partId: number) => {
+    try {
+      const response = await axios.post("/customization/check-combinations", {
+        partId,
+      });
+      return response.data.disabledOptions;
+    } catch (error) {
+      console.error("Error checking combinations:", error);
+      return [];
+    }
+  };
+
   const handleSelectChange =
     (category: string) =>
     async (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -86,20 +101,35 @@ const useBikeConfigurator = () => {
         .filter(Boolean) as number[];
 
       await checkVariation(selectedPartIds);
+
+      // Eliminar restricciones anteriores para la categoría actual
+      const updatedDisabledOptions = { ...disabledOptions };
+      delete updatedDisabledOptions[category];
+
+      // Agregar nuevas restricciones
+      const newDisabledOptions = await checkCombinations(
+        parts.find((part) => part.name === event.target.value)?.id!
+      );
+
+      setDisabledOptions((prev) => ({
+        ...updatedDisabledOptions,
+        [category]: newDisabledOptions,
+      }));
     };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     const selectedPartObjects = Object.entries(selectedParts)
       .map(([type, name]) =>
         parts.find((part) => part.type === type && part.name === name)
       )
       .filter(Boolean) as Part[];
 
-    try {
-      await dispatch(validateAndAddToCart(selectedPartObjects));
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-    }
+    const newBike = {
+      parts: selectedPartObjects,
+      totalPrice: totalPrice + priceAdjustment,
+    };
+
+    dispatch(addToCart(newBike));
   };
 
   return {
@@ -110,6 +140,7 @@ const useBikeConfigurator = () => {
     handleAddToCart,
     totalPrice,
     priceAdjustment,
+    disabledOptions,
     error,
   };
 };

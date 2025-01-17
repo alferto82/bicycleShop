@@ -13,7 +13,8 @@ interface PartSelectorProps {
   parts: Part[];
   selectedPart: string;
   handleSelectChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
-  onPriceChange?: (oldPrice: number, newPrice: number) => void;
+  onPriceChange: (oldPrice: number, newPrice: number) => void;
+  disabledOptions: number[];
 }
 
 const PartSelector: React.FC<PartSelectorProps> = ({
@@ -22,6 +23,7 @@ const PartSelector: React.FC<PartSelectorProps> = ({
   selectedPart,
   handleSelectChange,
   onPriceChange,
+  disabledOptions,
 }) => {
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const newSelectedPart = parts.find(
@@ -35,6 +37,10 @@ const PartSelector: React.FC<PartSelectorProps> = ({
     handleSelectChange(event);
   };
 
+  const isDisabled = (id: number) => {
+    return disabledOptions.includes(id);
+  };
+
   return (
     <FormControl fullWidth margin="normal">
       <InputLabel>{type}</InputLabel>
@@ -42,8 +48,13 @@ const PartSelector: React.FC<PartSelectorProps> = ({
         {parts
           .filter((part) => part.type === type)
           .map((part) => (
-            <MenuItem key={part.id} value={part.name}>
-              {part.name}
+            <MenuItem
+              key={part.id}
+              value={part.name}
+              disabled={isDisabled(part.id)}
+              style={{ color: isDisabled(part.id) ? "red" : "inherit" }}
+            >
+              ({part.id}) {part.name} - ${part.price}
             </MenuItem>
           ))}
       </Select>

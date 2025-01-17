@@ -100,4 +100,29 @@ const validateVariations = async (
   return { priceAdjustment };
 };
 
-export { validateCombination, validateVariations };
+const checkCombinations = async (
+  partId: number
+): Promise<{ disabledOptions: string[] }> => {
+  const invalidCombinations = await Combination.findAll({
+    where: {
+      [Op.or]: [
+        {
+          part1: partId,
+          allowed: false,
+        },
+        {
+          part2: partId,
+          allowed: false,
+        },
+      ],
+    },
+  });
+
+  const disabledOptions = invalidCombinations.map((combination) => {
+    return combination.part1 === partId ? combination.part2 : combination.part1;
+  });
+
+  return { disabledOptions };
+};
+
+export { validateCombination, validateVariations, checkCombinations };

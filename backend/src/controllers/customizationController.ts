@@ -41,4 +41,19 @@ const validateVariations = async (
   }
 };
 
-export { validateCombination, validateVariations };
+const checkCombinations = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const partId = req.body.partId;
+    const { disabledOptions } = await customizationService.checkCombinations(
+      partId
+    );
+    res.json({ disabledOptions });
+  } catch (error) {
+    res.status(400).json({ errorMessage: getErrorMessage(error) });
+  }
+};
+
+export { validateCombination, validateVariations, checkCombinations };

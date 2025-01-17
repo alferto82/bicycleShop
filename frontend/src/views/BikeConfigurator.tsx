@@ -12,6 +12,7 @@ const BikeConfigurator: React.FC = () => {
     handleAddToCart,
     totalPrice,
     priceAdjustment,
+    disabledOptions,
     error,
   } = useBikeConfigurator();
   const [temporalPrice, setTemporalPrice] = useState(totalPrice);
@@ -34,6 +35,7 @@ const BikeConfigurator: React.FC = () => {
           selectedPart={selectedParts[type]}
           handleSelectChange={handleSelectChange(type)}
           onPriceChange={handlePriceChange}
+          disabledOptions={Object.values(disabledOptions).flat()}
         />
       ))}
       {error && (

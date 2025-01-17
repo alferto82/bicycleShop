@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.post("/validate", customizationController.validateCombination);
 router.post("/validate-variations", customizationController.validateVariations);
+router.post("/check-combinations", customizationController.checkCombinations);
 
 export default router;
